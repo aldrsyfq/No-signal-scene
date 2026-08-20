@@ -27,6 +27,7 @@
 <body>
     <h1>无信号</h1>
     <audio id="bg-audio" src="无信号.mp3" preload="auto" style="display:none"></audio>
+    <!-- PLAY AUDIO -->
     <script>
         window.addEventListener('load', function () {
             var audio = document.getElementById('bg-audio');
@@ -49,6 +50,63 @@
                 });
             }
         });
+    </script>
+    <!-- FULLSCREEN TOGGLE -->
+    <script>
+        (function() {
+            var holdDuration = 1000; // ms
+            var startTime = 0;
+            var moved = false;
+            var touchId = null;
+
+            function onStart(e) {
+                if (document.fullscreenElement) return;
+                if (e.type === 'mousedown' && e.button !== 0) return;
+                moved = false;
+                startTime = Date.now();
+                if (e.type === 'touchstart' && e.changedTouches && e.changedTouches.length) {
+                    touchId = e.changedTouches[0].identifier;
+                } else {
+                    touchId = null;
+                }
+            }
+
+            function onMove() {
+                moved = true;
+            }
+
+            function onEnd(e) {
+                if (document.fullscreenElement) return;
+                var endTime = Date.now();
+                var elapsed = endTime - startTime;
+
+                if (e.type === 'touchend' && e.changedTouches && touchId !== null) {
+                    var found = false;
+                    for (var i = 0; i < e.changedTouches.length; i++) {
+                        if (e.changedTouches[i].identifier === touchId) { found = true; break; }
+                    }
+                    if (!found) return;
+                }
+
+                if (!moved && startTime && elapsed >= holdDuration) {
+                    var el = document.documentElement;
+                    var req = el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen;
+                    if (req) req.call(el).catch(function(){});
+                }
+
+                startTime = 0;
+                moved = false;
+                touchId = null;
+            }
+
+            window.addEventListener('touchstart', onStart, { passive: true });
+            window.addEventListener('mousedown', onStart, { passive: true });
+            window.addEventListener('touchmove', onMove, { passive: true });
+            window.addEventListener('mousemove', onMove, { passive: true });
+            window.addEventListener('touchcancel', function() { startTime = 0; moved = false; touchId = null; }, { passive: true });
+            window.addEventListener('touchend', onEnd, { passive: true });
+            window.addEventListener('mouseup', onEnd, { passive: true });
+        })();
     </script>
 </body>
 
