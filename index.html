@@ -54,6 +54,7 @@
     <!-- FULLSCREEN TOGGLE -->
     <script>
         (function() {
+<<<<<<< HEAD
             var holdDuration = 1000; // ms
             var startTime = 0;
             var moved = false;
@@ -106,6 +107,35 @@
             window.addEventListener('touchcancel', function() { startTime = 0; moved = false; touchId = null; }, { passive: true });
             window.addEventListener('touchend', onEnd, { passive: true });
             window.addEventListener('mouseup', onEnd, { passive: true });
+=======
+            var holdTimer = null;
+            var holdDuration = 1000; // ms
+
+            function startHold(e) {
+                if (document.fullscreenElement) return;
+                if (e.type === 'mousedown' && e.button !== 0) return;
+                holdTimer = setTimeout(function() {
+                    var el = document.documentElement;
+                    if (el.requestFullscreen) el.requestFullscreen().catch(function(){});
+                    else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+                    else if (el.msRequestFullscreen) el.msRequestFullscreen();
+                }, holdDuration);
+            }
+
+            function cancelHold() {
+                if (holdTimer) {
+                    clearTimeout(holdTimer);
+                    holdTimer = null;
+                }
+            }
+
+            ['touchstart', 'mousedown'].forEach(function(evt) {
+                window.addEventListener(evt, startHold, { passive: true });
+            });
+            ['touchend', 'touchmove', 'touchcancel', 'mouseup', 'mousemove', 'wheel', 'scroll'].forEach(function(evt) {
+                window.addEventListener(evt, cancelHold, { passive: true });
+            });
+>>>>>>> 9fb7c922a0f11a937b3ca87b93e85527a1419772
         })();
     </script>
 </body>
