@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html style="background-color: blue; color: white;" lang="en">
+
+<head>
+    <title>My Web Page</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        .html {
+            background-color: blue;
+        }
+
+        h1 {
+            text-shadow: 2px 2px 0px rgba(0, 0, 0, 1);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -100%);
+            font-weight: 100;
+            user-select: none;
+            font-size: 4rem;
+            font-family: 'Arial', sans-serif;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>无信号</h1>
+    <audio id="bg-audio" src="无信号.mp3" preload="auto" style="display:none"></audio>
+    <script>
+        window.addEventListener('load', function () {
+            var audio = document.getElementById('bg-audio');
+            if (!audio) return;
+            audio.loop = true;
+            var playPromise = audio.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(function () {
+                    var btn = document.createElement('button');
+                    btn.textContent = 'Play audio';
+                    btn.style.position = 'fixed';
+                    btn.style.right = '12px';
+                    btn.style.bottom = '12px';
+                    btn.style.zIndex = 9999;
+                    btn.onclick = function () {
+                        audio.play();
+                        btn.remove();
+                    };
+                    document.body.appendChild(btn);
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>
